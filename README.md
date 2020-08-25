@@ -9,20 +9,20 @@ repositories {
 	maven { url "https://jitpack.io" }
 }
 ```
-Replace `<version>` with the latest GitHub release's tag. This can also be a reference to your `gradle.properties`.
+`gradle.properties`.
 ##### As an *optional* dependency
 `build.gradle`
 ```gradle
 dependencies {
-	modImplementation "com.github.FoundationGames:MealAPI:<version>"
+	modImplementation "com.github.FoundationGames:MealAPI:-SNAPSHOT"
 }
 ```
 ##### As a *built-in* dependency
 `build.gradle`
 ```gradle
 dependencies {
-	modApi "com.github.FoundationGames:MealAPI:<version>"
-	include "com.github.FoundationGames:MealAPI:<version>"
+	modImplementation "com.github.FoundationGames:MealAPI:-SNAPSHOT"
+	include "com.github.FoundationGames:MealAPI:-SNAPSHOT"
 }
 ```
 ### Adding a meal
