@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.foundationgames.mealapi.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "PlayerEntityMixin",
+    "HungerManagerMixin",
+    "PlayerManagerMixin"
+  ],
+  "client": [
+    "ClientPlayerEntityMixin",
+    "InGameHudMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "mealapi",
+  "version": "${version}",
+
+  "name": "Meal API",
+  "description": "An API for adding more filling foods, and a new hunger bar.",
+  "authors": [
+    "FoundationGames"
+  ],
+  "contact": {
+    "homepage": "",
+    "sources": ""
+  },
+
+  "license": "MIT",
+  "icon": "assets/mealapi/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "io.github.foundationgames.mealapi.MealAPI"
+    ],
+    "client": [
+      "io.github.foundationgames.mealapi.MealAPIClient"
+    ]
+  },
+  "mixins": [
+    "mealapi.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*",
+    "minecraft": "1.16.x"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}
