@@ -7,7 +7,6 @@ import net.minecraft.item.ItemStack;
 
 import java.util.Map;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public final class MealItemRegistry {
     private static final Map<Item, BiFunction<PlayerEntity, ItemStack, Integer>> ENTRIES = Maps.newHashMap();
