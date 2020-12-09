@@ -1,6 +1,6 @@
 package io.github.foundationgames.mealapi.mixin;
 
-import io.github.foundationgames.mealapi.util.PlayerFullnessManager;
+import io.github.foundationgames.mealapi.api.PlayerFullnessManager;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;

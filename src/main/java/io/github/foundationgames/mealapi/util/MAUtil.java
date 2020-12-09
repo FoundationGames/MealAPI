@@ -1,6 +1,8 @@
 package io.github.foundationgames.mealapi.util;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.Identifier;
 
 public class MAUtil {
@@ -33,5 +35,15 @@ public class MAUtil {
     }
     public static double split(AtomicDouble value, double amount) {
         return split(value, amount, 0);
+    }
+    public static void alpha(float alpha) {
+        if (alpha < 1f) {
+            RenderSystem.enableBlend();
+            RenderSystem.color4f(1.0F, 1.0F, 1.0F, alpha);
+            RenderSystem.blendFunc(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+        } else {
+            RenderSystem.disableBlend();
+            RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        }
     }
 }

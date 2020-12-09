@@ -10,6 +10,7 @@
   ],
   "client": [
     "ClientPlayerEntityMixin",
+    "ASTooltipOverlayHandlerMixin",
     "InGameHudMixin"
   ],
   "injectors": {

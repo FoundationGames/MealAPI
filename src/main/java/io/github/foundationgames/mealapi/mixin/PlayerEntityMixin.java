@@ -1,7 +1,7 @@
 package io.github.foundationgames.mealapi.mixin;
 
 import io.github.foundationgames.mealapi.api.MealItemRegistry;
-import io.github.foundationgames.mealapi.util.PlayerFullnessManager;
+import io.github.foundationgames.mealapi.api.PlayerFullnessManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
@@ -28,6 +28,6 @@ public class PlayerEntityMixin {
 
     @Inject(method = "eatFood", at = @At(value = "HEAD"))
     private void applyFullness(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
-        PlayerFullnessManager.addFullness((PlayerEntity)(Object)this, MealItemRegistry.getFullness((PlayerEntity)(Object)this, stack.getItem(), stack), stack);
+        PlayerFullnessManager.addFullness((PlayerEntity)(Object)this, MealItemRegistry.getFullness((PlayerEntity)(Object)this, stack), stack);
     }
 }

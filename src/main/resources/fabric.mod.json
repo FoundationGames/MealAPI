@@ -21,6 +21,9 @@
     "main": [
       "io.github.foundationgames.mealapi.MealAPI"
     ],
+    "modmenu": [
+      "io.github.foundationgames.mealapi.config.MealAPIModMenu"
+    ],
     "client": [
       "io.github.foundationgames.mealapi.MealAPIClient"
     ]

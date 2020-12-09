@@ -1,6 +1,7 @@
 package io.github.foundationgames.mealapi.mixin;
 
 import io.github.foundationgames.mealapi.util.HudRenderUtil;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.util.math.MatrixStack;
@@ -20,6 +21,6 @@ public class InGameHudMixin extends DrawableHelper {
 
     @Inject(method = "renderStatusBars", at = @At(value = "TAIL"))
     private void renderFullnessBar(MatrixStack matrices, CallbackInfo ci) {
-        HudRenderUtil.renderFullnessBar(matrices, scaledWidth, scaledHeight, this, getCameraPlayer());
+        HudRenderUtil.renderFullnessBar(matrices, scaledWidth, scaledHeight, this, getCameraPlayer(), MinecraftClient.getInstance().getTickDelta());
     }
 }

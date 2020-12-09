@@ -1,6 +1,6 @@
 package io.github.foundationgames.mealapi.mixin;
 
-import io.github.foundationgames.mealapi.util.PlayerFullnessManager;
+import io.github.foundationgames.mealapi.api.PlayerFullnessManager;
 import io.github.foundationgames.mealapi.util.MAUtil;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
