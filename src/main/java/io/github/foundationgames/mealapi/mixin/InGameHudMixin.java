@@ -21,6 +21,7 @@ public class InGameHudMixin extends DrawableHelper {
 
     @Inject(method = "renderStatusBars", at = @At(value = "TAIL"))
     private void renderFullnessBar(MatrixStack matrices, CallbackInfo ci) {
-        HudRenderUtil.renderFullnessBar(matrices, scaledWidth, scaledHeight, this, getCameraPlayer(), MinecraftClient.getInstance().getTickDelta());
+        if(MinecraftClient.getInstance().player.getVehicle() == null)
+            HudRenderUtil.renderFullnessBar(matrices, scaledWidth, scaledHeight, this, getCameraPlayer(), MinecraftClient.getInstance().getTickDelta());
     }
 }
