@@ -20,7 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 
-public class HudRenderUtil {
+public final class HudRenderUtil {
     private static float flashAlpha = 0f;
     private static boolean flashUp = false;
     public static void renderFullnessBar(MatrixStack matrices, int scaledWidth, int scaledHeight, DrawableHelper draw, PlayerEntity player, float delta) {

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.util.Identifier;
 
-public class MAUtil {
+public final class MAUtil {
 
     public static final String MOD_ID = "mealapi";
 
