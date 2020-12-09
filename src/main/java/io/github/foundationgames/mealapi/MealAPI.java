@@ -18,9 +18,5 @@ public class MealAPI implements ModInitializer {
         for(MealAPIInitializer init : FabricLoader.INSTANCE.getEntrypoints("mealapi", MealAPIInitializer.class)) {
             init.onInitialize();
         }
-        MealItemRegistry.register(Items.PUMPKIN_PIE, ((playerEntity, stack) -> 64));
-        MealItemRegistry.register(Items.ROTTEN_FLESH, ((playerEntity, stack) -> 20));
-        MealItemRegistry.register(Items.PUFFERFISH, ((playerEntity, stack) -> 20));
-        MealItemRegistry.register(Items.DRIED_KELP, ((playerEntity, stack) -> 35));
     }
 }
