@@ -15,17 +15,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayerEntity.class)
-public class ClientPlayerEntityMixin extends PlayerEntity {
+public abstract class ClientPlayerEntityMixin extends PlayerEntity {
     public ClientPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile profile) {
         super(world, pos, yaw, profile);
-    }
-    @Override
-    public boolean isSpectator() {
-        return false;
-    }
-    @Override
-    public boolean isCreative() {
-        return false;
     }
 
     @Inject(method = "requestRespawn", at = @At(value = "HEAD"))
