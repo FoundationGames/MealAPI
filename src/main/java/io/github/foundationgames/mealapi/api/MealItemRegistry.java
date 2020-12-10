@@ -9,10 +9,11 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 /**
- * @author FoundationGames
  * A class used to register items as meal items,
  * and query the fullness value restored by those
  * registered items.
+ *
+ * @author FoundationGames
  */
 public final class MealItemRegistry {
     private static final Map<Item, BiFunction<PlayerEntity, ItemStack, Integer>> ENTRIES = Maps.newHashMap();

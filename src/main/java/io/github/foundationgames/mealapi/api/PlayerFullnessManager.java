@@ -19,10 +19,11 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * @author FoundationGames
  * A class used to manage and manipulate
  * players' fullness values on both the client
  * and server side.
+ *
+ * @author FoundationGames
  */
 public final class PlayerFullnessManager {
     /**
