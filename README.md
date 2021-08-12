@@ -4,23 +4,22 @@ Looking for the download? Go to [CurseForge](https://www.curseforge.com/minecraf
 ## Guide for Mod Developers
 
 ### Including the mod
-Note to modders: Meal API does not like to be JIJ included. It's not recommended. <br/>
-Add JitPack to your repositories block in `build.gradle`, and add the mod to your dependencies block.
+Add Modrinth to your repositories block in `build.gradle`, and add the mod to your dependencies block.
+`build.gradle`
 ```gradle
 repositories {
 	[...]
-	maven { url "https://jitpack.io" }
+	maven { url "https://api.modrinth.com/maven" }
 }
 ```
-`gradle.properties`.
 
 ##### Adding as a dependency
 `build.gradle`
 ```gradle
 dependencies {
-    //Replace the version number with the correct one for your version.
-    //See all versions in this project's GitHub Releases.
-	modApi "com.github.FoundationGames:MealAPI:0.3+1.17"
+    // Replace the version number with the correct one for your version.
+    // See all versions at https://modrinth.com/mod/mealapi/versions
+	modApi "maven.modrinth:mealapi:0.3+1.17"
 }
 ```
 Meal API isn't confined to one Minecraft version in its fabric.mod.json, however there is no guarantee a release will work on versions past what it's marked for.
