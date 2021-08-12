@@ -35,13 +35,13 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	// Mod Menu
-	modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modApi("com.terraformersmc:modmenu:${project.modmenu_version}") { transitive false }
 
 	// AppleSkin (API only, full mod used when using testmod)
-	modApi "squeek.appleskin:appleskin-fabric:${project.appleskin_version}:api"
+	modApi("squeek.appleskin:appleskin-fabric:${project.appleskin_version}:api") { transitive false }
 
 	// Config Screen
-	modApi "me.shedaniel.cloth:cloth-config-lite-fabric:${project.cloth_lite_version}"
+	modApi("me.shedaniel.cloth:cloth-config-lite-fabric:${project.cloth_lite_version}") { transitive false }
 	include "me.shedaniel.cloth:cloth-config-lite-fabric:${project.cloth_lite_version}"
 }
 
