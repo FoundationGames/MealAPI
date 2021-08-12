@@ -1,4 +1,4 @@
-package io.github.foundationgames.mealapi.api;
+package io.github.foundationgames.mealapi.api.v0;
 
 /**
  * An initializer class for mods intending for
@@ -13,5 +13,5 @@ public interface MealAPIInitializer {
     /**
      * Called on Meal API's initialization.
      */
-    void onInitialize();
+    void onMealApiInit();
 }

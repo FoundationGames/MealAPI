@@ -1,14 +1,14 @@
 plugins {
-	id 'fabric-loom' version '0.9-SNAPSHOT'
+	id 'fabric-loom'
 	id 'maven-publish'
 }
 
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
+archivesBaseName = "mealapitest"
+version = "0.0.0"
+group = "testmod.mealapi"
 
 static String terraformersUrl() {
 	def url = "https://maven.terraformersmc.com/"
@@ -21,37 +21,27 @@ static String terraformersUrl() {
 repositories {
 	maven { url = "https://maven.shedaniel.me/" }
 	maven { url = terraformersUrl() }
-	maven { url = "https://www.cursemaven.com" }
 	maven { url = "https://maven.shedaniel.me/" }
 	maven { url = "https://maven.ryanliptak.com/" }
 }
 
 dependencies {
-	//to change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
+	// Fabric API
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	// Mod Menu
-	modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
+	// Meal API
+	implementation project(":")
 
-	// AppleSkin (API only, full mod used when using testmod)
-	modApi "squeek.appleskin:appleskin-fabric:${project.appleskin_version}:api"
-
-	// Config Screen
-	modApi "me.shedaniel.cloth:cloth-config-lite-fabric:${project.cloth_lite_version}"
-	include "me.shedaniel.cloth:cloth-config-lite-fabric:${project.cloth_lite_version}"
+	// Test Runtime Mods
+	modRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modRuntime "squeek.appleskin:appleskin-fabric:${project.appleskin_version}"
 }
 
 processResources {
-	inputs.property "version", project.version
-
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
 }
 
 tasks.withType(JavaCompile) {
@@ -68,18 +58,4 @@ jar {
 }
 
 publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
-
-	repositories {
-		mavenLocal()
-	}
 }

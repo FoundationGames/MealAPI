@@ -1,10 +1,10 @@
 package io.github.foundationgames.mealapi.mixin;
 
-import io.github.foundationgames.mealapi.api.MealItemRegistry;
-import io.github.foundationgames.mealapi.api.PlayerFullnessManager;
+import io.github.foundationgames.mealapi.impl.PlayerFullnessUtilImpl;
+import io.github.foundationgames.mealapi.impl.MealItemRegistryImpl;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,19 +15,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerEntity.class)
 public class PlayerEntityMixin {
-    @Inject(method = "readCustomDataFromTag", at = @At(value = "TAIL"))
-    private void readFullness(CompoundTag tag, CallbackInfo ci) {
-        if((Object)this instanceof ServerPlayerEntity) PlayerFullnessManager.fromServerPlayerTag((ServerPlayerEntity)((Object)this), tag);
+    @Inject(method = "readCustomDataFromNbt", at = @At(value = "TAIL"))
+    private void mealapi$readFullness(NbtCompound tag, CallbackInfo ci) {
+        if((Object)this instanceof ServerPlayerEntity player) PlayerFullnessUtilImpl.INSTANCE.setPlayerFullness(player, tag.getInt("fullnessLevel"));;
     }
 
-    @Inject(method = "writeCustomDataToTag", at = @At(value = "TAIL"))
-    private void writeFullness(CompoundTag tag, CallbackInfo ci) {
-        if((Object)this instanceof ServerPlayerEntity) tag.putInt("fullnessLevel", PlayerFullnessManager.getServerPlayerFullness((ServerPlayerEntity)((Object)this)));
-        else tag.putInt("fullnessLevel", PlayerFullnessManager.getClientFullness());
+    @Inject(method = "writeCustomDataToNbt", at = @At(value = "TAIL"))
+    private void mealapi$writeFullness(NbtCompound tag, CallbackInfo ci) {
+        if((Object)this instanceof ServerPlayerEntity player) tag.putInt("fullnessLevel", PlayerFullnessUtilImpl.INSTANCE.getPlayerFullness(player));
+        else tag.putInt("fullnessLevel", PlayerFullnessUtilImpl.INSTANCE.getClientFullness());
     }
 
     @Inject(method = "eatFood", at = @At(value = "HEAD"))
-    private void applyFullness(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
-        PlayerFullnessManager.addFullness((PlayerEntity)(Object)this, MealItemRegistry.getFullness((PlayerEntity)(Object)this, stack), stack);
+    private void mealapi$applyFullness(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
+        if((Object)this instanceof ServerPlayerEntity player) PlayerFullnessUtilImpl.INSTANCE.addFullness(player, MealItemRegistryImpl.INSTANCE.getFullness((PlayerEntity)(Object)this, stack), stack);
     }
 }

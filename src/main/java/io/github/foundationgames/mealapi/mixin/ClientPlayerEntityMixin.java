@@ -3,7 +3,7 @@ package io.github.foundationgames.mealapi.mixin;
 import com.mojang.authlib.GameProfile;
 import io.github.foundationgames.mealapi.util.MAUtil;
 import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.network.ClientSidePacketRegistry;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.PacketByteBuf;
@@ -21,9 +21,9 @@ public abstract class ClientPlayerEntityMixin extends PlayerEntity {
     }
 
     @Inject(method = "requestRespawn", at = @At(value = "HEAD"))
-    private void sendFullnessResetPacket(CallbackInfo ci) {
+    private void mealapi$sendFullnessResetPacket(CallbackInfo ci) {
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeUuid(((ClientPlayerEntity)(Object)this).getUuid());
-        ClientSidePacketRegistry.INSTANCE.sendToServer(MAUtil.id("reset_fullness"), buf);
+        buf.writeUuid(this.getUuid());
+        ClientPlayNetworking.send(MAUtil.id("reset_fullness"), buf);
     }
 }

@@ -4,14 +4,14 @@
   "package": "io.github.foundationgames.mealapi.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "PlayerEntityMixin",
     "HungerManagerMixin",
+    "PlayerEntityMixin",
     "PlayerManagerMixin"
   ],
   "client": [
     "ClientPlayerEntityMixin",
-    "ASTooltipOverlayHandlerMixin",
-    "InGameHudMixin"
+    "InGameHudMixin",
+    "ScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

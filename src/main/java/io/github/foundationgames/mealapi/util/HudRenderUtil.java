@@ -1,55 +1,46 @@
 package io.github.foundationgames.mealapi.util;
 
-import com.mojang.datafixers.util.Pair;
-import io.github.foundationgames.mealapi.api.MealItemRegistry;
-import io.github.foundationgames.mealapi.api.PlayerFullnessManager;
+import com.mojang.blaze3d.systems.RenderSystem;
+import io.github.foundationgames.mealapi.MealAPI;
+import io.github.foundationgames.mealapi.impl.PlayerFullnessUtilImpl;
 import io.github.foundationgames.mealapi.config.MealAPIConfig.DefaultedYesNo;
-import io.github.foundationgames.mealapi.config.MealAPIConfig;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
-import net.fabricmc.fabric.api.event.client.ClientTickCallback;
-import net.fabricmc.loader.FabricLoader;
-import net.minecraft.client.MinecraftClient;
+import io.github.foundationgames.mealapi.impl.MealItemRegistryImpl;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.MathHelper;
 
 public final class HudRenderUtil {
     private static float flashAlpha = 0f;
     private static boolean flashUp = false;
+
+    public static final Identifier ICONS_TEX = MAUtil.id("textures/gui/mealapi_icons.png");
+
     public static void renderFullnessBar(MatrixStack matrices, int scaledWidth, int scaledHeight, DrawableHelper draw, PlayerEntity player, float delta) {
         int x = (scaledWidth / 2)+82;
         int y = scaledHeight - 39;
-        MinecraftClient.getInstance().getTextureManager().bindTexture(new Identifier("mealapi:textures/gui/mealapi_icons.png"));
 
-        int fullness = PlayerFullnessManager.getClientFullness();
-        final int maxFullness = PlayerFullnessManager.MAX_FULLNESS;
-        MealAPIConfig cfg = AutoConfig.getConfigHolder(MealAPIConfig.class).getConfig(); float opacity = ((float)cfg.fullnessBarOpacityPct / 100);
-        boolean border = cfg.fullnessIconBorders == DefaultedYesNo.YES || (cfg.fullnessIconBorders == DefaultedYesNo.DEFAULT && !appleSkin());
-        for (int i = 0; i < 10; i++) {
-            MAUtil.alpha(opacity);
-            int wid = (int) MAUtil.minimum(MAUtil.maximum((((float)fullness / maxFullness) * 60)-((i)*6), 6), 0);
-            draw.drawTexture(matrices, x-i*8, y, 9*wid, (player.hasStatusEffect(StatusEffects.HUNGER) ? 9 : 0) + (border ? 0 : 18), 9, 9);
-        }
-        MAUtil.alpha(1f);
-        ItemStack renderStack;
-        if(cfg.showFlashingFullnessPreview == DefaultedYesNo.YES || (cfg.showFlashingFullnessPreview == DefaultedYesNo.DEFAULT && appleSkin())) {
-            if (MealItemRegistry.getFullness(player, player.getStackInHand(Hand.MAIN_HAND)) <= 0) renderStack = player.getStackInHand(Hand.OFF_HAND);
-            else renderStack = player.getStackInHand(Hand.MAIN_HAND);
-            if (MealItemRegistry.getFullness(player, renderStack) > 0) {
-                MAUtil.alpha(flashAlpha * opacity);
-                for (int i = 0; i < 10; i++) {
-                    int potentialFull = (int) MAUtil.maximum(fullness + PlayerFullnessManager.getHealedFullness(player, renderStack), maxFullness);
-                    int wid = (int) MAUtil.minimum(MAUtil.maximum((((float) potentialFull / maxFullness) * 60) - ((i) * 6), 6), 0);
-                    boolean full = (fullness - i * (maxFullness / 10)) > (maxFullness / 10);
-                    if(!full) draw.drawTexture(matrices, x - i * 8, y, 9 * wid, (poisonous(renderStack) ? 9 : 0) + (border ? 0 : 18), 9, 9);
-                }
+        var cfg = MealAPI.getConfig();
+        float opacity = ((float)cfg.getValues().fullnessBarOpacityPct / 100);
+        int fullness = PlayerFullnessUtilImpl.INSTANCE.getClientFullness();
+
+        MAUtil.alpha(opacity);
+        drawFullnessBar(matrices, x, y, draw, fullness, player.hasStatusEffect(StatusEffects.HUNGER));
+
+        if(cfg.getValues().showFlashingFullnessPreview == DefaultedYesNo.YES || (cfg.getValues().showFlashingFullnessPreview == DefaultedYesNo.DEFAULT && MAUtil.appleSkin())) {
+            ItemStack previewStack = player.getStackInHand(Hand.MAIN_HAND);
+            if (MealItemRegistryImpl.INSTANCE.getFullness(player, player.getStackInHand(Hand.MAIN_HAND)) <= 0) {
+                previewStack = player.getStackInHand(Hand.OFF_HAND);
+            }
+            if (MealItemRegistryImpl.INSTANCE.getFullness(player, previewStack) > 0) {
+                MAUtil.alpha(getFlashAlpha() * opacity);
+                int potentialFull = Math.min(fullness + PlayerFullnessUtilImpl.INSTANCE.getHealedFullness(player, previewStack), PlayerFullnessUtilImpl.INSTANCE.getMaxFullness());
+                drawFullnessBar(matrices, x, y, draw, potentialFull, MAUtil.isPoisonous(previewStack));
             } else {
                 flashAlpha = 0.0F;
                 flashUp = true;
@@ -58,49 +49,32 @@ public final class HudRenderUtil {
         }
     }
 
-    public static void drawAppleSkinTooltip(MatrixStack matrices, ItemStack hoveredStack, int toolTipX, int toolTipY, int toolTipW, int toolTipH) {
-        Screen draw = MinecraftClient.getInstance().currentScreen;
-        PlayerEntity player = MinecraftClient.getInstance().player;
-        int fullness = MealItemRegistry.getFullness(player, hoveredStack);
-        final int maxFullness = PlayerFullnessManager.MAX_FULLNESS;
-        MealAPIConfig cfg = AutoConfig.getConfigHolder(MealAPIConfig.class).getConfig();
-        int x = toolTipX + toolTipW - 7;
-        int y = toolTipY + toolTipH + 23;
-        MinecraftClient.getInstance().getTextureManager().bindTexture(new Identifier("mealapi:textures/gui/mealapi_icons.png"));
+    public static void drawFullnessBar(MatrixStack matrices, int x, int y, DrawableHelper draw, int fullness, boolean poisoned) {
+        RenderSystem.setShaderTexture(0, ICONS_TEX);
+
+        final int maxFullness = PlayerFullnessUtilImpl.INSTANCE.getMaxFullness();
+        var cfg = MealAPI.getConfig();
+        boolean border = cfg.getValues().fullnessIconBorders == DefaultedYesNo.YES || (cfg.getValues().fullnessIconBorders == DefaultedYesNo.DEFAULT && !MAUtil.appleSkin());
         for (int i = 0; i < 10; i++) {
-            int wid = (int) MAUtil.minimum(MAUtil.maximum((((float)fullness / maxFullness) * 60)-((i)*6), 6), 0);
-            draw.drawTexture(matrices, x-i*6, y, 7*wid, poisonous(hoveredStack) ? 43 : 36, 7, 7);
+            int wid = (int) Math.max(Math.min((((float)fullness / maxFullness) * 60)-((i)*6), 6), 0);
+            draw.drawTexture(matrices, x-i*8, y, 9*wid, (poisoned ? 9 : 0) + (border ? 0 : 18), 9, 9);
         }
     }
 
     public static void initClient() {
-        ClientTickCallback.EVENT.register(client -> {
-            clientTick();
-        });
-    }
-
-    private static boolean appleSkin() {
-        return FabricLoader.INSTANCE.isModLoaded("appleskin");
-    }
-
-    private static boolean poisonous(ItemStack food) {
-        boolean b = false;
-        if(food.isFood()) {
-            for(Pair<StatusEffectInstance, Float> f : food.getItem().getFoodComponent().getStatusEffects()) {
-                if(f.getFirst().getEffectType().getType() == StatusEffectType.HARMFUL) b = true;
-            }
-        }
-        return b;
+        ClientTickEvents.START_CLIENT_TICK.register(client -> clientTick());
     }
 
     private static void clientTick() {
-        flashAlpha += (flashUp ? 1 : -1) * 0.125f;
+        flashAlpha += (flashUp ? 0.125f : -0.125f);
         if (flashAlpha >= 1.5f) {
-            flashAlpha = 1f;
             flashUp = false;
         } else if (flashAlpha <= -0.5f) {
-            flashAlpha = 0f;
             flashUp = true;
         }
+    }
+
+    private static float getFlashAlpha() {
+        return MathHelper.clamp(flashAlpha, 0, 1);
     }
 }

@@ -1,22 +1,37 @@
 package io.github.foundationgames.mealapi;
 
-import io.github.foundationgames.mealapi.api.MealAPIInitializer;
-import io.github.foundationgames.mealapi.api.MealItemRegistry;
+import io.github.foundationgames.mealapi.api.v0.MealAPIInitializer;
+import io.github.foundationgames.mealapi.impl.PlayerFullnessUtilImpl;
 import io.github.foundationgames.mealapi.config.MealAPIConfig;
-import io.github.foundationgames.mealapi.api.PlayerFullnessManager;
-import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
-import me.sargunvohra.mcmods.autoconfig1u.serializer.GsonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.FabricLoader;
-import net.minecraft.item.Items;
+import net.fabricmc.loader.api.FabricLoader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
 
 public class MealAPI implements ModInitializer {
+    public static final Logger LOG = LogManager.getLogger("Meal API");
+
     @Override
     public void onInitialize() {
-        AutoConfig.register(MealAPIConfig.class, GsonConfigSerializer::new);
-        PlayerFullnessManager.initCommon();
-        for(MealAPIInitializer init : FabricLoader.INSTANCE.getEntrypoints("mealapi", MealAPIInitializer.class)) {
-            init.onInitialize();
+        PlayerFullnessUtilImpl.initCommon();
+        for(MealAPIInitializer init : FabricLoader.getInstance().getEntrypoints("mealapi", MealAPIInitializer.class)) {
+            init.onMealApiInit();
+        }
+    }
+
+    private static final MealAPIConfig cfg = new MealAPIConfig();
+
+    public static MealAPIConfig getConfig() {
+        return cfg;
+    }
+
+    static {
+        try {
+            cfg.load();
+        } catch (IOException e) {
+            LOG.error("Error loading config on game start: "+e);
         }
     }
 }

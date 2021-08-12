@@ -1,6 +1,7 @@
 package io.github.foundationgames.mealapi.mixin;
 
-import io.github.foundationgames.mealapi.api.PlayerFullnessManager;
+import io.github.foundationgames.mealapi.impl.PlayerFullnessUtilImpl;
+import io.github.foundationgames.mealapi.util.HungerManagerAccess;
 import net.minecraft.entity.player.HungerManager;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -11,34 +12,46 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(HungerManager.class)
-public class HungerManagerMixin {
+public class HungerManagerMixin implements HungerManagerAccess {
     @Shadow private float exhaustion;
     @Shadow private int foodLevel;
     @Shadow private float foodSaturationLevel;
 
+    private int mealapi$fullness;
+
     @Inject(method = "update", at = @At(value = "HEAD"))
-    private void updateFullness(PlayerEntity player, CallbackInfo ci) {
+    private void mealapi$updateFullness(PlayerEntity player, CallbackInfo ci) {
         if (this.exhaustion > 4.0F) {
-            if(player instanceof ServerPlayerEntity) {
+            if (player instanceof ServerPlayerEntity) {
                 ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
-                if (PlayerFullnessManager.getServerPlayerFullness(serverPlayer) > 0) {
-                    PlayerFullnessManager.setServerPlayerFullness(serverPlayer, PlayerFullnessManager.getServerPlayerFullness(serverPlayer) - 1);
+                if (PlayerFullnessUtilImpl.INSTANCE.getPlayerFullness(serverPlayer) > 0) {
+                    PlayerFullnessUtilImpl.INSTANCE.setPlayerFullness(serverPlayer, PlayerFullnessUtilImpl.INSTANCE.getPlayerFullness(serverPlayer) - 1);
                 }
             }
         }
     }
 
     @Inject(method = "update", at = @At(value = "TAIL"))
-    private void applyEffectsFromFullness(PlayerEntity player, CallbackInfo ci) {
-        if(player instanceof ServerPlayerEntity) {
+    private void mealapi$applyEffectsFromFullness(PlayerEntity player, CallbackInfo ci) {
+        if (player instanceof ServerPlayerEntity) {
             ServerPlayerEntity serverPlayer = (ServerPlayerEntity)player;
-            if(PlayerFullnessManager.getServerPlayerFullness(serverPlayer) > 0) {
+            if (PlayerFullnessUtilImpl.INSTANCE.getPlayerFullness(serverPlayer) > 0) {
                 foodLevel = 20;
                 foodSaturationLevel = 20.0f;
             }
-        } else if(PlayerFullnessManager.getClientFullness() > 0) {
+        } else if (PlayerFullnessUtilImpl.INSTANCE.getClientFullness() > 0) {
             foodLevel = 20;
             foodSaturationLevel = 20.0f;
         }
+    }
+
+    @Override
+    public int mealapi$getFullness() {
+        return mealapi$fullness;
+    }
+
+    @Override
+    public void mealapi$setFullness(int amount) {
+        this.mealapi$fullness = Math.min(amount, PlayerFullnessUtilImpl.INSTANCE.getMaxFullness());
     }
 }

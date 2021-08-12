@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "testmod-mealapi",
+  "version": "0.0.0",
+
+  "name": "Meal API Test Mod",
+  "description": "A Test mod for Meal API",
+  "authors": [
+    "FoundationGames"
+  ],
+  "contact": {},
+
+  "license": "MIT",
+
+  "environment": "*",
+  "entrypoints": {
+    "mealapi": [
+      "testmod.mealapi.MealAPITest"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": "*",
+    "fabric": "*",
+    "minecraft": "*"
+  }
+}
