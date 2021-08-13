@@ -4,15 +4,14 @@ Looking for the download? Go to [CurseForge](https://www.curseforge.com/minecraf
 ## Guide for Mod Developers
 
 ### Including the mod
-Note to modders: Meal API does not like to be JIJ included. It's not recommended. <br/>
-Add JitPack to your repositories block in `build.gradle`, and add the mod to your dependencies block.
+Add Modrinth to your repositories block in `build.gradle`, and add the mod to your dependencies block.
+`build.gradle`
 ```gradle
 repositories {
 	[...]
-	maven { url "https://jitpack.io" }
+	maven { url "https://api.modrinth.com/maven" }
 }
 ```
-`gradle.properties`.
 
 ##### Adding as a dependency
 `build.gradle`

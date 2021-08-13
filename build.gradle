@@ -21,7 +21,6 @@ static String terraformersUrl() {
 repositories {
 	maven { url = "https://maven.shedaniel.me/" }
 	maven { url = terraformersUrl() }
-	maven { url = "https://maven.shedaniel.me/" }
 	maven { url = "https://maven.ryanliptak.com/" }
 }
 
