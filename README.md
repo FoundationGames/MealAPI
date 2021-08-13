@@ -20,7 +20,7 @@ repositories {
 dependencies {
     //Replace the version number with the correct one for your version.
     //See all versions in this project's GitHub Releases.
-	modApi "com.github.FoundationGames:MealAPI:0.3+1.17"
+	modApi "com.github.FoundationGames:MealAPI:0.3+1.16"
 }
 ```
 Meal API isn't confined to one Minecraft version in its fabric.mod.json, however there is no guarantee a release will work on versions past what it's marked for.

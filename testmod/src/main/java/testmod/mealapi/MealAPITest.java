@@ -19,8 +19,8 @@ public class MealAPITest implements MealAPIInitializer {
         MealItemRegistry.instance().register(Items.BAKED_POTATO, (player, stack) -> 34);
 
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            if (world.getBlockState(hitResult.getBlockPos()).isOf(Blocks.EMERALD_BLOCK) && player instanceof ServerPlayerEntity sPlayer) {
-                PlayerFullnessUtil.instance().addFullness(sPlayer, 18);
+            if (world.getBlockState(hitResult.getBlockPos()).isOf(Blocks.EMERALD_BLOCK) && player instanceof ServerPlayerEntity) {
+                PlayerFullnessUtil.instance().addFullness((ServerPlayerEntity)player, 18);
                 return ActionResult.SUCCESS;
             }
             return ActionResult.PASS;

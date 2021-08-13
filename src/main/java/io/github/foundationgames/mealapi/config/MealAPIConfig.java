@@ -1,6 +1,7 @@
 package io.github.foundationgames.mealapi.config;
 
 import com.google.gson.Gson;
+import com.google.gson.stream.JsonWriter;
 import io.github.foundationgames.mealapi.MealAPI;
 import me.shedaniel.clothconfiglite.api.ConfigScreen;
 import net.fabricmc.loader.api.FabricLoader;
@@ -9,6 +10,7 @@ import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.MathHelper;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -18,7 +20,6 @@ public class MealAPIConfig {
     public static class Values {
         public int fullnessBarOpacityPct = 100;
         public DefaultedYesNo showFlashingFullnessPreview = DefaultedYesNo.DEFAULT;
-        public DefaultedYesNo showFullnessTooltip = DefaultedYesNo.DEFAULT;
         public DefaultedYesNo fullnessIconBorders = DefaultedYesNo.DEFAULT;
 
         private void fix() {
@@ -49,17 +50,17 @@ public class MealAPIConfig {
 
     public void load() throws IOException {
         preload();
-        var configFile = getPath();
-        var gson = new Gson();
+        Path configFile = getPath();
+        Gson gson = new Gson();
         values = gson.fromJson(Files.newBufferedReader(configFile), Values.class);
         values.fix();
     }
 
     public void save() throws IOException {
         values.fix();
-        var configFile = getPath();
-        var gson = new Gson();
-        var writer = gson.newJsonWriter(Files.newBufferedWriter(configFile));
+        Path configFile = getPath();
+        Gson gson = new Gson();
+        JsonWriter writer = gson.newJsonWriter(Files.newBufferedWriter(configFile));
         writer.setIndent("    ");
         gson.toJson(gson.toJsonTree(values, Values.class), writer);
         writer.close();
@@ -80,9 +81,9 @@ public class MealAPIConfig {
         } catch (IOException e) {
             MealAPI.LOG.error("Error loading config to create screen: "+e);
         }
-        var screen = ConfigScreen.create(new TranslatableText("text.config.mealapi.title"), parent);
-        var defaultVals = new Values();
-        for (var f : Values.class.getDeclaredFields()) {
+        ConfigScreen screen = ConfigScreen.create(new TranslatableText("text.config.mealapi.title"), parent);
+        Values defaultVals = new Values();
+        for (Field f : Values.class.getDeclaredFields()) {
             try {
                 // Set and get the field value, so it throws an exception if it's not modifiable and therefore is excluded from config
                 f.set(defaultVals, f.get(defaultVals));

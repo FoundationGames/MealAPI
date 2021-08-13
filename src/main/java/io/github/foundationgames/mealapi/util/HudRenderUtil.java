@@ -1,11 +1,12 @@
 package io.github.foundationgames.mealapi.util;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.foundationgames.mealapi.MealAPI;
-import io.github.foundationgames.mealapi.impl.PlayerFullnessUtilImpl;
+import io.github.foundationgames.mealapi.config.MealAPIConfig;
 import io.github.foundationgames.mealapi.config.MealAPIConfig.DefaultedYesNo;
 import io.github.foundationgames.mealapi.impl.MealItemRegistryImpl;
+import io.github.foundationgames.mealapi.impl.PlayerFullnessUtilImpl;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.effect.StatusEffects;
@@ -25,7 +26,7 @@ public final class HudRenderUtil {
         int x = (scaledWidth / 2)+82;
         int y = scaledHeight - 39;
 
-        var cfg = MealAPI.getConfig();
+        MealAPIConfig cfg = MealAPI.getConfig();
         float opacity = ((float)cfg.getValues().fullnessBarOpacityPct / 100);
         int fullness = PlayerFullnessUtilImpl.INSTANCE.getClientFullness();
 
@@ -50,10 +51,10 @@ public final class HudRenderUtil {
     }
 
     public static void drawFullnessBar(MatrixStack matrices, int x, int y, DrawableHelper draw, int fullness, boolean poisoned) {
-        RenderSystem.setShaderTexture(0, ICONS_TEX);
+        MinecraftClient.getInstance().getTextureManager().bindTexture(ICONS_TEX);
 
         final int maxFullness = PlayerFullnessUtilImpl.INSTANCE.getMaxFullness();
-        var cfg = MealAPI.getConfig();
+        MealAPIConfig cfg = MealAPI.getConfig();
         boolean border = cfg.getValues().fullnessIconBorders == DefaultedYesNo.YES || (cfg.getValues().fullnessIconBorders == DefaultedYesNo.DEFAULT && !MAUtil.appleSkin());
         for (int i = 0; i < 10; i++) {
             int wid = (int) Math.max(Math.min((((float)fullness / maxFullness) * 60)-((i)*6), 6), 0);

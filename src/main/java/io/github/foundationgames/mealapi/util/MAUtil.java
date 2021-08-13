@@ -2,7 +2,9 @@ package io.github.foundationgames.mealapi.util;
 
 import com.google.common.util.concurrent.AtomicDouble;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Pair;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffectType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -28,16 +30,16 @@ public final class MAUtil {
     public static void alpha(float alpha) {
         if (alpha < 1f) {
             RenderSystem.enableBlend();
-            RenderSystem.setShaderColor(1, 1, 1, alpha);
+            RenderSystem.color4f(1, 1, 1, alpha);
         } else {
             RenderSystem.disableBlend();
-            RenderSystem.setShaderColor(1, 1, 1, 1);
+            RenderSystem.color4f(1, 1, 1, 1);
         }
     }
 
     public static boolean isPoisonous(ItemStack food) {
         if (food.isFood()) {
-            for(var effectPair : food.getItem().getFoodComponent().getStatusEffects()) {
+            for(Pair<StatusEffectInstance, Float> effectPair : food.getItem().getFoodComponent().getStatusEffects()) {
                 if(effectPair.getFirst().getEffectType().getType() == StatusEffectType.HARMFUL) return true;
             }
         }
