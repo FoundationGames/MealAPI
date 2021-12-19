@@ -3,7 +3,7 @@ package io.github.foundationgames.mealapi.util;
 import com.google.common.util.concurrent.AtomicDouble;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.entity.effect.StatusEffectType;
+import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 
@@ -38,7 +38,7 @@ public final class MAUtil {
     public static boolean isPoisonous(ItemStack food) {
         if (food.isFood()) {
             for(var effectPair : food.getItem().getFoodComponent().getStatusEffects()) {
-                if(effectPair.getFirst().getEffectType().getType() == StatusEffectType.HARMFUL) return true;
+                if(effectPair.getFirst().getEffectType().getCategory() == StatusEffectCategory.HARMFUL) return true;
             }
         }
         return false;
