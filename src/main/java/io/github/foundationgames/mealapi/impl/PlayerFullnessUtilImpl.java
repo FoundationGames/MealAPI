@@ -8,7 +8,6 @@ import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.network.ServerSidePacketRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -37,7 +36,7 @@ public final class PlayerFullnessUtilImpl implements PlayerFullnessUtil {
         ((HungerManagerAccess)player.getHungerManager()).mealapi$setFullness(amount);
         PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeInt(amount);
-        if(player.networkHandler != null) ServerSidePacketRegistry.INSTANCE.sendToPlayer(player, MAUtil.id("update_fullness"), buf);
+        if(player.networkHandler != null) ServerPlayNetworking.send(player, MAUtil.id("update_fullness"), buf);
     }
 
     @Override
