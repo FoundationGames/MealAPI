@@ -36,8 +36,8 @@ dependencies {
 	implementation project(path: ":", configuration: "namedElements")
 
 	// Test Runtime Mods
-	modRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modRuntime "squeek.appleskin:appleskin-fabric:${project.appleskin_version}"
+	modRuntimeOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+	modRuntimeOnly "squeek.appleskin:appleskin-fabric:${project.appleskin_version}"
 }
 
 processResources {
