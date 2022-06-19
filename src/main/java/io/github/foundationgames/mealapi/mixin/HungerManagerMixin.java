@@ -15,17 +15,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class HungerManagerMixin implements HungerManagerAccess {
     @Shadow private float exhaustion;
     @Shadow private int foodLevel;
-    @Shadow private float foodSaturationLevel;
+    @Shadow private float saturationLevel;
 
     private int mealapi$fullness;
 
     @Inject(method = "update", at = @At(value = "HEAD"))
     private void mealapi$updateFullness(PlayerEntity player, CallbackInfo ci) {
         if (this.exhaustion > 4.0F) {
-            if (player instanceof ServerPlayerEntity) {
-                ServerPlayerEntity serverPlayer = (ServerPlayerEntity) player;
-                if (PlayerFullnessUtilImpl.INSTANCE.getPlayerFullness(serverPlayer) > 0) {
-                    PlayerFullnessUtilImpl.INSTANCE.setPlayerFullness(serverPlayer, PlayerFullnessUtilImpl.INSTANCE.getPlayerFullness(serverPlayer) - 1);
+            if (player instanceof ServerPlayerEntity sPlayer) {
+                if (PlayerFullnessUtilImpl.INSTANCE.getPlayerFullness(sPlayer) > 0) {
+                    PlayerFullnessUtilImpl.INSTANCE.setPlayerFullness(sPlayer, PlayerFullnessUtilImpl.INSTANCE.getPlayerFullness(sPlayer) - 1);
                 }
             }
         }
@@ -33,15 +32,14 @@ public class HungerManagerMixin implements HungerManagerAccess {
 
     @Inject(method = "update", at = @At(value = "TAIL"))
     private void mealapi$applyEffectsFromFullness(PlayerEntity player, CallbackInfo ci) {
-        if (player instanceof ServerPlayerEntity) {
-            ServerPlayerEntity serverPlayer = (ServerPlayerEntity)player;
-            if (PlayerFullnessUtilImpl.INSTANCE.getPlayerFullness(serverPlayer) > 0) {
+        if (player instanceof ServerPlayerEntity sPlayer) {
+            if (PlayerFullnessUtilImpl.INSTANCE.getPlayerFullness(sPlayer) > 0) {
                 foodLevel = 20;
-                foodSaturationLevel = 20.0f;
+                saturationLevel = 20.0f;
             }
-        } else if (PlayerFullnessUtilImpl.INSTANCE.getClientFullness() > 0) {
+        } else if (player.world.isClient() && PlayerFullnessUtilImpl.INSTANCE.getClientFullness() > 0) {
             foodLevel = 20;
-            foodSaturationLevel = 20.0f;
+            saturationLevel = 20.0f;
         }
     }
 

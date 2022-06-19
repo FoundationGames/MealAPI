@@ -37,7 +37,9 @@ dependencies {
 
 	// Test Runtime Mods
 	modRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
-	modRuntime "squeek.appleskin:appleskin-fabric:${project.appleskin_version}"
+	modRuntime ("squeek.appleskin:appleskin-fabric:${project.appleskin_version}") {
+		exclude(group: "net.fabricmc")
+	}
 }
 
 processResources {
