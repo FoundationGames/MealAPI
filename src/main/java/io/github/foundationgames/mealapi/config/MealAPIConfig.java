@@ -5,7 +5,7 @@ import io.github.foundationgames.mealapi.MealAPI;
 import me.shedaniel.clothconfiglite.api.ConfigScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 import java.io.IOException;
@@ -80,14 +80,14 @@ public class MealAPIConfig {
         } catch (IOException e) {
             MealAPI.LOG.error("Error loading config to create screen: "+e);
         }
-        var screen = ConfigScreen.create(new TranslatableText("text.config.mealapi.title"), parent);
+        var screen = ConfigScreen.create(Text.translatable("text.config.mealapi.title"), parent);
         var defaultVals = new Values();
         for (var f : Values.class.getDeclaredFields()) {
             try {
                 // Set and get the field value, so it throws an exception if it's not modifiable and therefore is excluded from config
                 f.set(defaultVals, f.get(defaultVals));
                 screen.add(
-                        new TranslatableText("text.config.mealapi.option."+f.getName()),
+                        Text.translatable("text.config.mealapi.option."+f.getName()),
                         f.get(values),
                         () -> { try { return f.get(defaultVals); } catch (IllegalAccessException ignored) {} return null; },
                         (val) -> { try { f.set(values, val); } catch (IllegalAccessException ignored) {} trySave(); }
