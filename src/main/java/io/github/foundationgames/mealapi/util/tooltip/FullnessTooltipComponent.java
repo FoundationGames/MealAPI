@@ -6,6 +6,7 @@ import io.github.foundationgames.mealapi.util.HudRenderUtil;
 import io.github.foundationgames.mealapi.util.MAUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
+import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.client.util.math.MatrixStack;
@@ -37,8 +38,7 @@ public class FullnessTooltipComponent implements TooltipComponent {
     }
 
     @Override
-    public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer, int z) {
-        var draw = MinecraftClient.getInstance().currentScreen;
+    public void drawItems(TextRenderer textRenderer, int x, int y, MatrixStack matrices, ItemRenderer itemRenderer) {
         final int maxFullness = PlayerFullnessUtilImpl.INSTANCE.getMaxFullness();
         int fullness = Math.min(getFullness(), maxFullness);
         float fullnessF = (float)fullness / maxFullness;
@@ -46,7 +46,7 @@ public class FullnessTooltipComponent implements TooltipComponent {
         int right = (((int)Math.ceil(Math.floor((fullnessF) * 60) / 6)) * 7) - 7;
         for (int i = 0; i < 10; i++) {
             int wid = (int) Math.max(Math.min(((fullnessF) * 60)-((i)*6), 6), 0);
-            draw.drawTexture(matrices, right + (x-i*7), y - 1, 7*wid, MAUtil.isPoisonous(food) ? 43 : 36, 7, 7);
+            DrawableHelper.drawTexture(matrices, right + (x-i*7), y - 1, 7*wid, MAUtil.isPoisonous(food) ? 43 : 36, 7, 7);
         }
     }
 }

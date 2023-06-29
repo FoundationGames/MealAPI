@@ -1,8 +1,8 @@
 package io.github.foundationgames.mealapi.config;
 
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonListWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.OptionListWidget;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.util.math.MatrixStack;
@@ -53,7 +53,7 @@ public class MealAPIScreen extends Screen {
 
     @Override
     protected void init() {
-        var buttons = new ButtonListWidget(this.client, this.width, this.height, 32, this.height - 32, 25);
+        var buttons = new OptionListWidget(this.client, this.width, this.height, 32, this.height - 32, 25);
         for (SimpleOption<?> option : this.options) {
             buttons.addSingleOptionEntry(option);
         }
@@ -72,6 +72,6 @@ public class MealAPIScreen extends Screen {
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
         super.render(matrices, mouseX, mouseY, delta);
 
-        drawCenteredText(matrices, this.textRenderer, this.title, this.width / 2, 13, 0xFFFFFF);
+        drawCenteredTextWithShadow(matrices, this.textRenderer, this.title, this.width / 2, 13, 0xFFFFFF);
     }
 }
