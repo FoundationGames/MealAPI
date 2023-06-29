@@ -4,6 +4,8 @@
 build/
 out/
 classes/
+testmod/.gradle/
+testmod/build/
 
 # eclipse
 
@@ -27,6 +29,7 @@ bin/
 # fabric
 
 run/
+testmod/run/
 
 # other
 

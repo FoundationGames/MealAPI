@@ -1,16 +1,17 @@
 package io.github.foundationgames.mealapi.config;
 
 import com.google.gson.Gson;
+import com.mojang.serialization.Codec;
 import io.github.foundationgames.mealapi.MealAPI;
-import me.shedaniel.clothconfiglite.api.ConfigScreen;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.MathHelper;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 public class MealAPIConfig {
     public static final String FILE_NAME = "mealapi.json";
@@ -28,12 +29,31 @@ public class MealAPIConfig {
 
     private Values values = new Values();
 
-    public enum DefaultedYesNo {
+    public enum DefaultedYesNo implements StringIdentifiable {
         YES, NO, DEFAULT;
+
+        @Override
+        public String asString() {
+            return this.name();
+        }
     }
+
+    public static List<DefaultedYesNo> YES_NO_VALUES = List.of(DefaultedYesNo.values());
+    public static Codec<DefaultedYesNo> YES_NO_CODEC = StringIdentifiable.createCodec(DefaultedYesNo::values);
 
     public Values getValues() {
         return values;
+    }
+
+    public Values copyValues() {
+        var newVals = new Values();
+        for (var f : Values.class.getDeclaredFields()) {
+            try {
+                f.set(newVals, f.get(this.values));
+            } catch (IllegalAccessException ignored) {}
+        }
+
+        return newVals;
     }
 
     public Path getPath() {
@@ -73,29 +93,19 @@ public class MealAPIConfig {
         }
     }
 
-    // Yeah I like annotation based config serializer libraries but I also don't want to make one
-    public ConfigScreen screen(Screen parent) {
-        try {
-            load();
-        } catch (IOException e) {
-            MealAPI.LOG.error("Error loading config to create screen: "+e);
-        }
-        var screen = ConfigScreen.create(Text.translatable("text.config.mealapi.title"), parent);
-        var defaultVals = new Values();
-        for (var f : Values.class.getDeclaredFields()) {
-            try {
-                // Set and get the field value, so it throws an exception if it's not modifiable and therefore is excluded from config
-                f.set(defaultVals, f.get(defaultVals));
-                screen.add(
-                        Text.translatable("text.config.mealapi.option."+f.getName()),
-                        f.get(values),
-                        () -> { try { return f.get(defaultVals); } catch (IllegalAccessException ignored) {} return null; },
-                        (val) -> { try { f.set(values, val); } catch (IllegalAccessException ignored) {} trySave(); }
-                );
-            } catch (IllegalAccessException ignored) {
-                // Field can't be accessed and thus can't be saved
-            }
-        }
+    public Screen screen(Screen parent) {
+        var values = this.copyValues();
+
+        var screen = new MealAPIScreen(parent, () -> {
+            this.values = values;
+            this.trySave();
+        });
+
+        screen.addIntRange("fullnessBarOpacityPct", val -> values.fullnessBarOpacityPct = val, values.fullnessBarOpacityPct, 0, 100);
+        screen.addDefaultedYesNo("showFlashingFullnessPreview", val -> values.showFlashingFullnessPreview = val, values.showFlashingFullnessPreview);
+        screen.addDefaultedYesNo("showFullnessTooltip", val -> values.showFullnessTooltip = val, values.showFullnessTooltip);
+        screen.addDefaultedYesNo("fullnessIconBorders", val -> values.fullnessIconBorders = val, values.fullnessIconBorders);
+
         return screen;
     }
 }

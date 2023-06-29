@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.12-SNAPSHOT'
+	id 'fabric-loom' version '1.2-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -10,18 +10,10 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
-static String terraformersUrl() {
-	def url = "https://maven.terraformersmc.com/"
-	def conn = new URL(url).openConnection()
-	conn.connect()
-	url = conn.getResponseCode() == 521 ? "https://raw.githubusercontent.com/TerraformersMC/Archive/main/releases" : url
-	return url
-}
-
 repositories {
-	maven { url = "https://maven.shedaniel.me/" }
-	maven { url = terraformersUrl() }
-	maven { url = "https://maven.ryanliptak.com/" }
+	maven { url = 'https://maven.shedaniel.me/' }
+	maven { url = 'https://maven.terraformersmc.com/' }
+	maven { url = 'https://maven.ryanliptak.com/' }
 }
 
 dependencies {
@@ -38,10 +30,6 @@ dependencies {
 
 	// AppleSkin (API only, full mod used when using testmod)
 	modApi("squeek.appleskin:appleskin-fabric:${project.appleskin_version}:api") { transitive false }
-
-	// Config Screen
-	modApi("me.shedaniel.cloth:cloth-config-lite-fabric:${project.cloth_lite_version}") { transitive false }
-	include "me.shedaniel.cloth:cloth-config-lite-fabric:${project.cloth_lite_version}"
 }
 
 processResources {
@@ -56,9 +44,8 @@ tasks.withType(JavaCompile) {
 	options.encoding = "UTF-8"
 }
 
-task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = "sources"
-	from sourceSets.main.allSource
+java {
+	withSourcesJar()
 }
 
 jar {
