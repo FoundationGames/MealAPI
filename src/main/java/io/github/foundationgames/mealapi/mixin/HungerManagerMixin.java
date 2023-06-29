@@ -37,7 +37,7 @@ public class HungerManagerMixin implements HungerManagerAccess {
                 foodLevel = 20;
                 saturationLevel = 20.0f;
             }
-        } else if (player.world.isClient() && PlayerFullnessUtilImpl.INSTANCE.getClientFullness() > 0) {
+        } else if (player.getWorld().isClient() && PlayerFullnessUtilImpl.INSTANCE.getClientFullness() > 0) {
             foodLevel = 20;
             saturationLevel = 20.0f;
         }

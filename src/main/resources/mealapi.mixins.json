@@ -10,9 +10,9 @@
   ],
   "client": [
     "ClientPlayerEntityMixin",
-    "CreativeInventoryScreenMixin",
-    "InGameHudMixin",
-    "ScreenMixin"
+    "DrawContextMixin",
+    "HandledScreenMixins",
+    "InGameHudMixin"
   ],
   "injectors": {
     "defaultRequire": 1

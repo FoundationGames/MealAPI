@@ -10,6 +10,9 @@ import net.minecraft.util.Identifier;
 public final class MAUtil {
     public static final String MOD_ID = "mealapi";
 
+    // When set, the next tooltip rendered will show this stack's fullness
+    public static ItemStack TOOLTIP_STACK = null;
+
     public static Identifier id(String path) {
         return new Identifier(MOD_ID, path);
     }

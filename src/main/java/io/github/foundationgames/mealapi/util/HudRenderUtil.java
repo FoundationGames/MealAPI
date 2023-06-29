@@ -1,13 +1,11 @@
 package io.github.foundationgames.mealapi.util;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.foundationgames.mealapi.MealAPI;
-import io.github.foundationgames.mealapi.impl.PlayerFullnessUtilImpl;
 import io.github.foundationgames.mealapi.config.MealAPIConfig.DefaultedYesNo;
 import io.github.foundationgames.mealapi.impl.MealItemRegistryImpl;
+import io.github.foundationgames.mealapi.impl.PlayerFullnessUtilImpl;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -21,7 +19,7 @@ public final class HudRenderUtil {
 
     public static final Identifier ICONS_TEX = MAUtil.id("textures/gui/mealapi_icons.png");
 
-    public static void renderFullnessBar(MatrixStack matrices, int scaledWidth, int scaledHeight, DrawableHelper draw, PlayerEntity player, float delta) {
+    public static void renderFullnessBar(DrawContext context, int scaledWidth, int scaledHeight, PlayerEntity player, float delta) {
         int x = (scaledWidth / 2)+82;
         int y = scaledHeight - 39;
 
@@ -30,7 +28,7 @@ public final class HudRenderUtil {
         int fullness = PlayerFullnessUtilImpl.INSTANCE.getClientFullness();
 
         MAUtil.alpha(opacity);
-        drawFullnessBar(matrices, x, y, draw, fullness, player.hasStatusEffect(StatusEffects.HUNGER));
+        drawFullnessBar(context, x, y, fullness, player.hasStatusEffect(StatusEffects.HUNGER));
 
         if(cfg.getValues().showFlashingFullnessPreview == DefaultedYesNo.YES || (cfg.getValues().showFlashingFullnessPreview == DefaultedYesNo.DEFAULT && MAUtil.appleSkin())) {
             ItemStack previewStack = player.getStackInHand(Hand.MAIN_HAND);
@@ -40,7 +38,7 @@ public final class HudRenderUtil {
             if (MealItemRegistryImpl.INSTANCE.getFullness(player, previewStack) > 0) {
                 MAUtil.alpha(getFlashAlpha() * opacity);
                 int potentialFull = Math.min(fullness + PlayerFullnessUtilImpl.INSTANCE.getHealedFullness(player, previewStack), PlayerFullnessUtilImpl.INSTANCE.getMaxFullness());
-                drawFullnessBar(matrices, x, y, draw, potentialFull, MAUtil.isPoisonous(previewStack));
+                drawFullnessBar(context, x, y, potentialFull, MAUtil.isPoisonous(previewStack));
             } else {
                 flashAlpha = 0.0F;
                 flashUp = true;
@@ -49,15 +47,13 @@ public final class HudRenderUtil {
         }
     }
 
-    public static void drawFullnessBar(MatrixStack matrices, int x, int y, DrawableHelper draw, int fullness, boolean poisoned) {
-        RenderSystem.setShaderTexture(0, ICONS_TEX);
-
+    public static void drawFullnessBar(DrawContext context, int x, int y, int fullness, boolean poisoned) {
         final int maxFullness = PlayerFullnessUtilImpl.INSTANCE.getMaxFullness();
         var cfg = MealAPI.getConfig();
         boolean border = cfg.getValues().fullnessIconBorders == DefaultedYesNo.YES || (cfg.getValues().fullnessIconBorders == DefaultedYesNo.DEFAULT && !MAUtil.appleSkin());
         for (int i = 0; i < 10; i++) {
             int wid = (int) Math.max(Math.min((((float)fullness / maxFullness) * 60)-((i)*6), 6), 0);
-            draw.drawTexture(matrices, x-i*8, y, 9*wid, (poisoned ? 9 : 0) + (border ? 0 : 18), 9, 9);
+            context.drawTexture(ICONS_TEX, x-i*8, y, 9*wid, (poisoned ? 9 : 0) + (border ? 0 : 18), 9, 9);
         }
     }
 
