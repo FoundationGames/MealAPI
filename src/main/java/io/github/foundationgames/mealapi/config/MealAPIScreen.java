@@ -1,5 +1,6 @@
 package io.github.foundationgames.mealapi.config;
 
+import io.github.foundationgames.mealapi.MealAPI;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.OptionListWidget;
@@ -9,6 +10,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
@@ -26,6 +28,26 @@ public class MealAPIScreen extends Screen {
 
         this.parent = parent;
         this.save = save;
+    }
+
+    public static MealAPIScreen create(MealAPIConfig config, Screen parent) {
+        var values = config.copyValues();
+
+        var screen = new MealAPIScreen(parent, () -> {
+            config.setValues(values);
+            try {
+                config.save();
+            } catch (IOException e) {
+                MealAPI.LOG.error("Could not save config!", e);
+            }
+        });
+
+        screen.addIntRange("fullnessBarOpacityPct", val -> values.fullnessBarOpacityPct = val, values.fullnessBarOpacityPct, 0, 100);
+        screen.addDefaultedYesNo("showFlashingFullnessPreview", val -> values.showFlashingFullnessPreview = val, values.showFlashingFullnessPreview);
+        screen.addDefaultedYesNo("showFullnessTooltip", val -> values.showFullnessTooltip = val, values.showFullnessTooltip);
+        screen.addDefaultedYesNo("fullnessIconBorders", val -> values.fullnessIconBorders = val, values.fullnessIconBorders);
+
+        return screen;
     }
 
     public void addDefaultedYesNo(String key, Consumer<MealAPIConfig.DefaultedYesNo> setter, MealAPIConfig.DefaultedYesNo currentValue) {

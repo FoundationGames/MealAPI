@@ -41,6 +41,10 @@ public class MealAPIConfig {
     public static List<DefaultedYesNo> YES_NO_VALUES = List.of(DefaultedYesNo.values());
     public static Codec<DefaultedYesNo> YES_NO_CODEC = StringIdentifiable.createCodec(DefaultedYesNo::values);
 
+    public void setValues(Values values) {
+        this.values = values;
+    }
+
     public Values getValues() {
         return values;
     }
@@ -83,29 +87,5 @@ public class MealAPIConfig {
         writer.setIndent("    ");
         gson.toJson(gson.toJsonTree(values, Values.class), writer);
         writer.close();
-    }
-
-    private void trySave() {
-        try {
-            this.save();
-        } catch (IOException e) {
-            MealAPI.LOG.error("Could not save config: "+e);
-        }
-    }
-
-    public Screen screen(Screen parent) {
-        var values = this.copyValues();
-
-        var screen = new MealAPIScreen(parent, () -> {
-            this.values = values;
-            this.trySave();
-        });
-
-        screen.addIntRange("fullnessBarOpacityPct", val -> values.fullnessBarOpacityPct = val, values.fullnessBarOpacityPct, 0, 100);
-        screen.addDefaultedYesNo("showFlashingFullnessPreview", val -> values.showFlashingFullnessPreview = val, values.showFlashingFullnessPreview);
-        screen.addDefaultedYesNo("showFullnessTooltip", val -> values.showFullnessTooltip = val, values.showFullnessTooltip);
-        screen.addDefaultedYesNo("fullnessIconBorders", val -> values.fullnessIconBorders = val, values.fullnessIconBorders);
-
-        return screen;
     }
 }
