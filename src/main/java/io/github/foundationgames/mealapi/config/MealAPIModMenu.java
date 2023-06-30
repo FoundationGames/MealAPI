@@ -10,6 +10,6 @@ import net.fabricmc.api.Environment;
 public class MealAPIModMenu implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> MealAPI.getConfig().screen(parent);
+        return parent -> MealAPIScreen.create(MealAPI.getConfig(), parent);
     }
 }
